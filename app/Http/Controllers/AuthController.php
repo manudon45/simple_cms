@@ -30,11 +30,19 @@ class AuthController extends Controller
 
         // dd($request);
         if(Auth::attempt($fields, $request->remember)) {
-            return redirect()->intended();
+            return redirect()->intended('dashboard');
         } else {
             return back()->withErrors([
                 'failed' => 'wrong password or email'
             ]);
         }
+    }
+
+    //logout
+    public function logout(Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }
