@@ -22,6 +22,19 @@ class AuthController extends Controller
 
     // login
     public function login(Request $request) {
-        dd('ok');
+        //VAlidate
+        $fields = $request ->validate([
+            'email' => ['required', 'email','max:255'],
+            'password' => ['required']
+        ]);
+
+        // dd($request);
+        if(Auth::attempt($fields, $request->remember)) {
+            return redirect()->intended();
+        } else {
+            return back()->withErrors([
+                'failed' => 'wrong password or email'
+            ]);
+        }
     }
 }
