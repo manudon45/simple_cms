@@ -19,4 +19,9 @@ class AuthController extends Controller
         Auth::login($user);
         return redirect()->route('home');
     }
+
+    // login
+    public function login(Request $request) {
+        dd('ok');
+    }
 }

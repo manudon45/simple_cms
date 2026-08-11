@@ -10,3 +10,6 @@ Route::get('/register', function () {
 })->name('register');
 
 Route::post('/register',[AuthController::class,'register']);
+
+Route::view('/login', 'auth.login')->name('login');
+Route::post('/login',[AuthController::class,'login']);
