@@ -3,8 +3,10 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
 
-Route::view('/', 'posts.index')->name('home');
+Route::redirect('/', 'posts');
+Route::resource('posts', PostController::class);
 
 // Route::get('/register', function () {
 //     return view('auth.register');
@@ -28,4 +30,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::view('/login', 'auth.register')->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+});
+
+Route::get('/logout', function() {
+    return redirect()->route('posts.index');
 });
