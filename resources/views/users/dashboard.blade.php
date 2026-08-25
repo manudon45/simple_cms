@@ -6,9 +6,9 @@
 
         {{-- -Session message --}}
         @if (session('success'))
-        <div class="mb-2">
-            <x-flashMsg msg="{{ session('success') }}" />
-        </div>
+            <div class="mb-2">
+                <x-flashMsg msg="{{ session('success') }}" />
+            </div>
         @endif
 
         <form action="{{ route('posts.store') }}" method="post">
@@ -33,5 +33,17 @@
             </div>
             <button class="btn">Create</button>
         </form>
+    </div>
+
+    {{-- user posts --}}
+    <h2 class="font-bold mb-4">Your Latest Posts</h2>
+    <div class="grid grid-cols-2 gap-6">
+        @foreach ($posts as $post)
+            <x-postCard :post="$post"/>
+        @endforeach
+    </div>
+
+    <div>
+        {{ $posts->links() }}
     </div>
 </x-layout>

@@ -7,6 +7,7 @@ use App\Http\Controllers\PostController;
 
 Route::redirect('/', 'posts');
 Route::resource('posts', PostController::class);
+Route::get('/{user}/posts', [DashboardController::class, 'userPosts'])->name('posts.user');
 
 // Route::get('/register', function () {
 //     return view('auth.register');
