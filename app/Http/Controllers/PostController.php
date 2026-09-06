@@ -112,7 +112,7 @@ class PostController extends Controller
             'body' => $request->body,
             'image' => $path
         ]);
-        return redirect()->route('dashboard')->with('success', 'Your post was udpated.');
+        return redirect()->route('dashboard')->with('success', 'Your post was updated');
     }
 
     /**
