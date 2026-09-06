@@ -26,7 +26,7 @@ class PostController extends Controller
     {
         $posts = Post::latest()->paginate(6);
         // dd($posts);
-        return view('posts.index', ['posts'=>$posts]);
+        return view('posts.index', ['posts' => $posts]);
     }
 
     /**
@@ -43,9 +43,9 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //valdiate
-        $fields = $request -> validate([
-            'title'=>['required','max:255'],
-            'body'=>['required'],
+        $fields = $request->validate([
+            'title' => ['required', 'max:255'],
+            'body' => ['required'],
             'image' => ['nullable', 'file', 'max:3000', 'mimes:png,jpg,webp']
         ]);
 
@@ -56,8 +56,8 @@ class PostController extends Controller
         }
 
         Auth::user()->posts()->create([
-            'title' =>$request->title,
-            'body' =>$request->body,
+            'title' => $request->title,
+            'body' => $request->body,
             'image' => $path
         ]);
         return back()->with('success', "Your post was created");
@@ -68,7 +68,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('posts.show', ['post'=>$post]);
+        return view('posts.show', ['post' => $post]);
     }
 
     /**
@@ -92,12 +92,27 @@ class PostController extends Controller
         Gate::authorize('modify', $post);
 
         // validate
-        $fields = $request -> validate([
-            'title' =>['required', 'max:255'],
-            'body' =>['required']
+        $fields = $request->validate([
+            'title' => ['required', 'max:255'],
+            'body' => ['required'],
+            'image' => ['nullable', 'file', 'max:3000', 'mimes:png,jpg,webp']
         ]);
-        $post ->update($fields);
-        return redirect()->route('dashboard')->with('success','Your post was udpated.');
+
+        // update image if exists
+        $path = $post->image ?? null;
+        if ($request->hasFile('image')) {
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+            $path = Storage::disk('public')->put('post_images', $request->image);
+        }
+
+        $post->update([
+            'title' => $request->title,
+            'body' => $request->body,
+            'image' => $path
+        ]);
+        return redirect()->route('dashboard')->with('success', 'Your post was udpated.');
     }
 
     /**
@@ -108,8 +123,13 @@ class PostController extends Controller
         // Authorizing the action
         Gate::authorize('modify', $post);
 
+        // delete post image if exist
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
+        }
+
         //
-        $post ->delete();
+        $post->delete();
         return back()->with('delete', 'your post was deleted');
     }
 }
